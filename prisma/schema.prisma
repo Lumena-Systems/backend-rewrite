@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders           Order[]
+  idempotencyKeys  IdempotencyKey[]
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  price         Float
+  stockQuantity Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orderItems           OrderItem[]
+  inventoryReservations InventoryReservation[]
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  userId    String
+  status    String   @default("PENDING")
+  total     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user                  User                   @relation(fields: [userId], references: [id])
+  items                 OrderItem[]
+  payments              Payment[]
+  inventoryReservations InventoryReservation[]
+  shipments             Shipment[]
+}
+
+model OrderItem {
+  id              String   @id @default(uuid())
+  orderId         String
+  productId       String
+  quantity        Int
+  priceAtPurchase Float
+  createdAt       DateTime @default(now())
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  orderId       String
+  amount        Float
+  status        String   @default("PENDING")
+  paymentMethod String
+  metadata      String? // JSON stored as string
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model InventoryReservation {
+  id        String   @id @default(uuid())
+  productId String
+  orderId   String
+  quantity  Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+}
+
+model Shipment {
+  id             String    @id @default(uuid())
+  orderId        String
+  trackingNumber String?
+  carrier        String?
+  status         String    @default("PENDING")
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model IdempotencyKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  userId    String
+  endpoint  String
+  response  String? // JSON stored as string
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  discount    String
+  description String?
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Note: SQLite doesn't support native enums, so we use String fields instead
+// Valid values for Order.status: PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED
+// Valid values for Payment.status: PENDING, PROCESSING, COMPLETED, FAILED, REFUNDED
+// Valid values for Shipment.status: PENDING, PROCESSING, SHIPPED, DELIVERED, FAILED
+
