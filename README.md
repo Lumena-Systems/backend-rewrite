@@ -5,11 +5,11 @@ Welcome! This is a hands-on technical interview for a Backend Engineer position.
 ## Overview
 
 This interview focuses on practical backend engineering challenges that staff engineers face daily:
-- **Observability**: Adding comprehensive logging, metrics, and alerting
-- **Performance**: Identifying and fixing database connection issues
-- **API Design**: Designing resilient APIs for large-scale data processing
 - **Reliability**: Implementing double-write protection
+- **API Design**: Designing resilient APIs for large-scale data processing
+- **Performance**: Identifying and fixing database connection issues
 - **Post-mortems**: Preventing classes of bugs through better practices
+- **Observability**: Adding comprehensive logging, metrics, and alerting
 
 ## Tech Stack
 
@@ -22,38 +22,40 @@ This interview focuses on practical backend engineering challenges that staff en
 
 ### 1. Install Dependencies
 
+Optional, but helpful:
+
 ```bash
 npm install
-```
 
-### 2. Set Up Database
-
-```bash
 # Generate Prisma client
 npx prisma generate
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed the database with test data
-npm run seed
 ```
 
 ## Exercise Overview
 
 The interview consists of 5 exercises. Your interviewer will guide you through them, but here's a quick overview:
 
-### 1. Observability
+### 1. Double-Write Protection
 
-**File**: `src/services/orderFulfillment.ts`  
-**Endpoint**: `POST /api/orders/:orderId/fulfill`
+**File**: `src/services/checkoutService.ts`  
+**Endpoint**: `POST /api/checkout`
 
-Add comprehensive observability to the order fulfillment pipeline:
-- Structured logging at each stage
-- Metrics (durations, success rates, inventory levels)
-- Alerting for failure scenarios
+Users are (occasionally) being charged twice. Find and fix the issue.
 
-### 2. Database Deadlock Issue
+Context:
+- Users are reporting they're being charged twice for the same order.
+- Occurs infrequently, but enough to be a problem.
+- Based on logging, there seems to be two calls to the checkout endpoint with the same data.
+- This endpoint is called by the frontend (not present in repo)
+
+### 2. CSV Upload API Design
+
+**File**: `src/services/bulkUpload.ts`  
+**Endpoint**: `POST /api/products/bulk-upload`
+
+Design a better API for bulk product uploads that handles large files efficiently.
+
+### 3. Database Deadlock Issue
 
 **File**: `src/services/paymentProcessor.ts`  
 **Endpoint**: `POST /api/payments/process`
@@ -64,26 +66,22 @@ There was a new server deployment that made changes to our paymentProcessor.
 All requests, even those unrelated to the paymentProcessor, are hanging.
 DB connection pool shows that all connections are being used.
 
-### 3. CSV Upload API Design
-
-**File**: `src/services/bulkUpload.ts`  
-**Endpoint**: `POST /api/products/bulk-upload`
-
-Design a better API for bulk product uploads that handles large files efficiently.
-
-### 4. Double-Write Protection
-
-**File**: `src/services/checkoutService.ts`  
-**Endpoint**: `POST /api/checkout`
-
-Users are (occasionally) being charged twice. Find and fix the issue.
-
-### 5. Post-mortem Analysis
+### 4. Post-mortem Analysis
 
 **File**: `src/services/discountService.ts`  
 **Endpoint**: `POST /api/checkout/:orderId/apply-coupon`
 
 A previous SEV caused incorrect discounts in production. How would you prevent this class of bugs in the future?
+
+### 5. Observability
+
+**File**: `src/services/orderFulfillment.ts`  
+**Endpoint**: `POST /api/orders/:orderId/fulfill`
+
+Add comprehensive observability to the order fulfillment pipeline:
+- Structured logging
+- Metrics
+- Alerting for failure scenarios
 
 ## API Endpoints Reference
 
@@ -133,11 +131,11 @@ src/
 │   ├── products.ts
 │   └── checkout.ts
 ├── services/                  # Business logic
-│   ├── orderFulfillment.ts    # Observability exercise
-│   ├── paymentProcessor.ts    # Deadlock exercise
-│   ├── bulkUpload.ts          # CSV upload exercise
 │   ├── checkoutService.ts     # Double-write exercise
+│   ├── bulkUpload.ts          # CSV upload exercise
+│   ├── paymentProcessor.ts    # Deadlock exercise
 │   ├── discountService.ts     # Post-mortem exercise
+│   ├── orderFulfillment.ts    # Observability exercise
 │   ├── observability.ts       # Observability interface
 │   └── externalValidator.ts   # Simulated external API
 ├── utils/
@@ -150,5 +148,3 @@ prisma/
 ## Questions?
 
 Don't hesitate to ask your interviewer questions during the interview. Good luck!
-
-
