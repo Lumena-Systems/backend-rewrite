@@ -10,6 +10,9 @@ export class FinancialReportGenerator {
    * Generates a monthly financial report, converts currencies, 
    * saves it to disk, and attempts to upload it to a backup server.
    * 
+   * This is a LEGACY service that no one has touched in years.
+   * Nobody knows how it works or what it does.
+   * 
    * PROBLEM: This function is nearly impossible to test because:
    * 1. It depends on the actual filesystem (fs.writeFileSync)
    * 2. It depends on an external API (fetch to exchange rates)
