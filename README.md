@@ -10,6 +10,7 @@ This interview focuses on practical backend engineering challenges that staff en
 - **Performance**: Identifying and fixing database connection issues
 - **Post-mortems**: Preventing classes of bugs through better practices
 - **Observability**: Adding comprehensive logging, metrics, and alerting
+- **Architecture**: Refactoring legacy code for testability and maintainability
 
 ## Tech Stack
 
@@ -83,6 +84,12 @@ Add comprehensive observability to the order fulfillment pipeline:
 - Metrics
 - Alerting for failure scenarios
 
+### 6. Refactoring for Testability
+
+**File**: `src/services/financialReport.ts`
+
+Refactor a legacy "God Object" service to be unit testable.
+
 ## API Endpoints Reference
 
 ### Orders
@@ -136,6 +143,7 @@ src/
 │   ├── paymentProcessor.ts    # Deadlock exercise
 │   ├── discountService.ts     # Post-mortem exercise
 │   ├── orderFulfillment.ts    # Observability exercise
+│   ├── financialReport.ts     # Refactoring exercise
 │   ├── observability.ts       # Observability interface
 │   └── externalValidator.ts   # Simulated external API
 ├── utils/
