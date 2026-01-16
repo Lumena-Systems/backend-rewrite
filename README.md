@@ -90,6 +90,12 @@ Add comprehensive observability to the order fulfillment pipeline:
 
 Refactor a legacy "God Object" service to be unit testable.
 
+### 7. Self-hosted Shopify (no code, conceptual discussions)
+
+Suppose you are Shopify, a company that enables other companies to build and host their own shopping website. A minority of your customers are worried about data privacy and insist on self-hosting.
+
+What technical questions would you have to answer to solve the self-hosting situation? How would you think about logging, metrics, databases, etc. in this self-hosted environment?
+
 ## API Endpoints Reference
 
 ### Orders
